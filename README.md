@@ -51,6 +51,21 @@ PGDATABASE=flight_booking
 
 MVP backend with Node.js + Express + EJS + PostgreSQL. Focus: login, register, home.
 
+## Redis (Optional Cache)
+
+Install and run Redis locally (default `redis://127.0.0.1:6379`) or supply a connection string.
+
+```env
+# Defaults shown
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+# Or a single URL: REDIS_URL=redis://127.0.0.1:6379
+# Cache TTL for flight list (seconds)
+FLIGHT_CACHE_TTL=60
+```
+
+Redis is used to cache the `listFlights` query to reduce Postgres load. Cache entries are invalidated automatically whenever flights are created, updated, or deleted. Set `REDIS_ENABLED=false` to bypass caching (useful if Redis isn’t available locally), and `REDIS_RETRY_INTERVAL_MS` to control how long the app waits before retrying a failed Redis connection.
+
 ## Prerequisites
 
 - Install Node.js LTS from https://nodejs.org

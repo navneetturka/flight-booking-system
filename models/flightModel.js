@@ -1,4 +1,5 @@
 const { query } = require("../config/db");
+const { getRedisClient, redisEnabled } = require("../config/redis");
 
 const selectClause = `
 	SELECT 
@@ -13,7 +14,32 @@ const selectClause = `
 `;
 
 async function listFlights() {
-	return await query(`${selectClause} ORDER BY id DESC`);
+	const cacheKey = "flights:all";
+	const ttl = Number(process.env.FLIGHT_CACHE_TTL || 60);
+	let redis = null;
+	if (redisEnabled) {
+		try {
+			redis = await getRedisClient();
+			if (redis) {
+				const cached = await redis.get(cacheKey);
+				if (cached) {
+					return JSON.parse(cached);
+				}
+			}
+		} catch (err) {
+			redis = null;
+			console.warn("Redis unavailable for flight cache", err?.message || err);
+		}
+	}
+	const flights = await query(`${selectClause} ORDER BY id DESC`);
+	if (redis) {
+		try {
+			await redis.setEx(cacheKey, ttl, JSON.stringify(flights));
+		} catch (err) {
+			console.warn("Failed to set flight cache", err?.message || err);
+		}
+	}
+	return flights;
 }
 
 async function findById(id) {
@@ -31,7 +57,9 @@ async function createFlight({ number, origin, destination, departAt, arriveAt, p
 			price`,
 		[number, origin, destination, departAt, arriveAt, Number(price)]
 	);
-	return rows[0];
+	const flight = rows[0];
+	await invalidateFlightCache();
+	return flight;
 }
 
 async function updateFlight(id, updates) {
@@ -59,12 +87,32 @@ async function updateFlight(id, updates) {
 			price`,
 		values
 	);
-	return rows[0] || null;
+	const flight = rows[0] || null;
+	if (flight) {
+		await invalidateFlightCache();
+	}
+	return flight;
 }
 
 async function deleteFlight(id) {
 	const rows = await query("DELETE FROM flights WHERE id = $1 RETURNING id", [id]);
-	return rows.length > 0;
+	const deleted = rows.length > 0;
+	if (deleted) {
+		await invalidateFlightCache();
+	}
+	return deleted;
+}
+
+async function invalidateFlightCache() {
+	if (!redisEnabled) return;
+	try {
+		const redis = await getRedisClient();
+		if (redis) {
+			await redis.del("flights:all");
+		}
+	} catch (err) {
+		console.warn("Failed to invalidate flight cache", err?.message || err);
+	}
 }
 
 module.exports = { listFlights, findById, createFlight, updateFlight, deleteFlight };
