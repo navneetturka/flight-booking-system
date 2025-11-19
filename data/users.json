@@ -1,0 +1,34 @@
+[
+  {
+    "id": "91c79ad4-c887-4140-a712-1f873a011097",
+    "name": "Himanshi Jolly",
+    "email": "himanshijolly3@gmail.com",
+    "passwordHash": "$2b$10$d.K.THGcV6DzcHDAjCiLDe3tGe95m1q8c.xS.qdS1Tg5cn0gQiora",
+    "role": "admin",
+    "createdAt": "2025-09-23T11:00:28.181Z"
+  },
+  {
+    "id": "07204e9b-e803-4e1a-9564-6d31791f1bce",
+    "name": "komal",
+    "email": "komal@gmail.com",
+    "passwordHash": "$2b$10$ai..eTPERUtff8/3CvcrQ.hv6TrifgDTYoCElKkQTFHE7ID10fksu",
+    "role": "admin",
+    "createdAt": "2025-09-23T11:59:58.811Z"
+  },
+  {
+    "id": "774e830e-5f55-4cf6-923c-edbd15b76b8d",
+    "name": "Komalpreet",
+    "email": "k@gmail.com",
+    "passwordHash": "$2b$10$vw50m07aFIi5Hnaj5Y0MweBPkTFaw1gI7Os11zZ42fyb2guyTOrD6",
+    "role": "user",
+    "createdAt": "2025-09-23T12:01:39.898Z"
+  },
+  {
+    "id": "ad0130ee-027b-429f-bc2d-22c2fb673bc0",
+    "name": "Prabh",
+    "email": "prabh@gmail.com",
+    "passwordHash": "$2b$10$NFP4a69pgixpD1KDPmHvkupxlteVNbh1alI/2WO5EmZl0/bv3Hiri",
+    "role": "user",
+    "createdAt": "2025-09-23T12:20:38.394Z"
+  }
+]

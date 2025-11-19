@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title || 'Flight Booking' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/script.js" defer></script>
+  </head>
+  <body>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <nav class="navbar">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <div class="realtime-indicator" data-realtime-indicator data-status="offline">
+          <span class="realtime-dot"></span>
+          <span data-realtime-label>Offline</span>
+        </div>
+        <div class="links">
+          <a href="/">Dashboard</a>
+          <a href="/flights">Flights</a>
+          <a href="/bookings">My Bookings</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/bookings/all">All Bookings</a>
+          <% } %>
+          <form method="post" action="/logout" style="margin:0">
+            <button class="logout-btn" type="submit">Logout</button>
+          </form>
+        </div>
+      </nav>
+    <% } %>
+
+    <!-- Hero Banner -->
+    <header class="hero">
+      <div class="hero-viewport">
+        <div class="hero-slider" data-interval="3000">
+        <div class="slide active">
+          <img src="https://images.unsplash.com/photo-1483450388369-9ed95738483c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Jet" />
+        </div>
+        <div class="slide">
+          <img src="https://media.istockphoto.com/id/1332876699/photo/aerial-flying-airplane-and-sky-landscape-close-up.webp?a=1&s=612x612&w=0&k=20&c=3DaSbCXw40oyufrJsoRbq7abrWATzaSFkN2h8xpCAoI=" alt="Airport" />
+        </div>
+        <div class="slide">
+          <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=1600&auto=format&fit=crop" alt="Cabin" />
+        </div>
+        <div class="slide">
+          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1600&auto=format&fit=crop" alt="Runway" />
+        </div>
+        <div class="slide">
+          <img src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?q=80&w=1600&auto=format&fit=crop" alt="Terminal" />
+        </div>
+        <div class="slider-dots"></div>
+        </div>
+      </div>
+      <div class="hero-content">
+        <h1>Fly smarter with SkyReserve</h1>
+        <p>Discover destinations, manage bookings, and travel with confidence.</p>
+        <div class="hero-cta">
+          <% if (typeof user === 'undefined' || !user) { %>
+            <a class="btn-primary" href="/register">Get Started</a>
+            <a class="btn-secondary" href="/login">Sign In</a>
+          <% } else { %>
+            <a class="btn-primary" href="/flights">Search Flights</a>
+            <a class="btn-secondary" href="/bookings">My Bookings</a>
+          <% } %>
+        </div>
+      </div>
+    </header>
+
+    <!-- Intro / Services -->
+    <section class="section section-center">
+      <div class="container-narrow">
+        <h2 class="section-title">Seamless travel, superior service</h2>
+        <p class="section-subtitle">
+          Established 2025 • 24/7 support • Trusted by travelers worldwide. From
+          fare discovery to instant booking and flexible management, SkyReserve keeps your journey smooth.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Best price tracking</span>
+          <span class="pill">Flexible rescheduling</span>
+          <span class="pill">Secure payments</span>
+          <span class="pill">Real-time alerts</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials / Experiences -->
+    <section class="section">
+      <div class="container-wide">
+        <h2 class="section-title" style="text-align:center">What travelers say</h2>
+        <div class="testimonial-marquee">
+          <div class="marquee-track">
+            <% const testimonials = [
+              { img: 'https://i.pravatar.cc/120?img=11', quote: 'Booked in minutes. Super smooth!' },
+              { img: 'https://i.pravatar.cc/120?img=22', quote: 'Great prices and timely alerts.' },
+              { img: 'https://i.pravatar.cc/120?img=33', quote: 'Customer support was fantastic.' },
+              { img: 'https://i.pravatar.cc/120?img=44', quote: 'Clean UI, easy to manage trips.' },
+              { img: 'https://i.pravatar.cc/120?img=55', quote: 'Rebooking was hassle-free!' },
+            ]; %>
+            <% testimonials.concat(testimonials).forEach(t => { %>
+              <div class="testimonial-card">
+                <div class="avatar"><img src="<%= t.img %>" alt="Traveler" /></div>
+                <p class="quote">“<%= t.quote %>”</p>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Steps to book -->
+    <section class="section">
+      <div class="container-narrow">
+        <h2 class="section-title" style="text-align:center">How to book a flight</h2>
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-num">1</div>
+            <h3>Search flights</h3>
+            <p>Pick origin, destination, and dates to explore options.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <h3>Choose your fare</h3>
+            <p>Compare prices, times, and amenities that suit you.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <h3>Secure checkout</h3>
+            <p>Pay safely and receive instant confirmation.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <h3>Manage easily</h3>
+            <p>View trips, reschedule, and get real-time updates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Flights (optional if logged in) -->
+    <% const _flights = (typeof flights !== 'undefined' && flights) ? flights : []; %>
+    <% if (_flights.length > 0) { %>
+      <section class="section">
+        <div class="container-wide">
+          <h2 class="section-title" style="text-align:center">Trending flights</h2>
+          <div class="grid grid-5">
+            <% _flights.forEach(f => { %>
+              <div class="flight-card">
+                <h3><%= f.number %> • <span class="price">$<%= f.price %></span></h3>
+                <div class="flight-meta"><%= f.origin %> → <%= f.destination %></div>
+                <div class="flight-meta">Depart: <%= f.departAt %></div>
+                <div class="flight-meta">Arrive: <%= f.arriveAt %></div>
+                <div class="card-actions">
+                  <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                    <form method="post" action="/flights/<%= f.id %>/delete">
+                      <button class="btn-primary" type="submit" style="background:var(--danger);color:white">Delete</button>
+                    </form>
+                  <% } else { %>
+                    <form method="post" action="/bookings">
+                      <input type="hidden" name="flightId" value="<%= f.id %>" />
+                      <button class="btn-primary" type="submit">Book</button>
+                    </form>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <div class="footer-links">
+          <a href="/flights">Flights</a>
+          <a href="/bookings">Bookings</a>
+          <% if (typeof user === 'undefined' || !user) { %>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+          <% } %>
+        </div>
+        <div class="footer-contact">
+          <div style="font-weight:700;margin-bottom:6px">Contact us</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:14px">
+            <span>📧 <a href="mailto:support@skyreserve.example" style="color:var(--text);text-decoration:none">support@skyreserve.example</a></span>
+            <span>📞 <a href="tel:+18001234567" style="color:var(--text);text-decoration:none">+1 800 123 4567</a></span>
+            <span>📍 New Delhi, India</span>
+          </div>
+        </div>
+        <div class="footer-copy">© <%= new Date().getFullYear() %> SkyReserve. All rights reserved.</div>
+      </div>
+    </footer>
+  </body>
+ </html>

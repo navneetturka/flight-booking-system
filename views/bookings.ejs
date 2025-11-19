@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title || 'Bookings' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/script.js" defer></script>
+  </head>
+  <body>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <nav class="navbar">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <div class="realtime-indicator" data-realtime-indicator data-status="offline">
+          <span class="realtime-dot"></span>
+          <span data-realtime-label>Offline</span>
+        </div>
+        <div class="links">
+          <a href="/">Dashboard</a>
+          <a href="/flights">Flights</a>
+          <a href="/bookings">My Bookings</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/bookings/all">All Bookings</a>
+          <% } %>
+          <form method="post" action="/logout" style="margin:0">
+            <button class="logout-btn" type="submit">Logout</button>
+          </form>
+        </div>
+      </nav>
+    <% } %>
+    <div class="container">
+      <div class="auth-card" style="max-width:900px;width:100%">
+        <h1 class="auth-title"><%= title || 'Bookings' %></h1>
+        <% if (!bookings || bookings.length === 0) { %>
+          <p class="auth-subtitle">No bookings yet.</p>
+        <% } else { %>
+          <table style="width:100%;border-collapse:collapse;color:var(--text);font-size:14px">
+            <thead>
+              <tr style="text-align:left;border-bottom:1px solid var(--card-border)">
+                <th>ID</th><th>User</th><th>Flight</th><th>Created</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% bookings.forEach(b => { %>
+                <tr style="border-bottom:1px solid var(--card-border)">
+                  <td><%= b.id %></td>
+                  <td><%= b.userId %></td>
+                  <td><%= b.flightId %></td>
+                  <td><%= b.createdAt %></td>
+                  <td>
+                    <form method="post" action="/bookings/<%= b.id %>?_method=DELETE" style="display:inline">
+                      <input type="hidden" name="_method" value="DELETE" />
+                      <button class="btn-primary" style="background:var(--danger);color:white">Cancel</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>
