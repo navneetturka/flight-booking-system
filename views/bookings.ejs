@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title || 'Bookings' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+    <script>window.CURRENT_USER = <%- JSON.stringify(user || null) %>;</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/script.js" defer></script>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <nav class="navbar">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <div class="links">
+          <a href="/">Dashboard</a>
+          <a href="/flights">Flights</a>
+          <a href="/bookings">My Bookings</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/bookings/all">All Bookings</a>
+          <% } %>
+          <form method="post" action="/logout" style="margin:0">
+            <button class="logout-btn" type="submit">Logout</button>
+          </form>
+        </div>
+      </nav>
+    <% } %>
+    <div class="container">
+      <div class="auth-card" style="max-width:900px;width:100%">
+        <% const isAdminView = (user && user.role === 'admin' && title === 'All Bookings'); %>
+        <h1 class="auth-title"><%= title || 'Bookings' %></h1>
+        <% if (!bookings || bookings.length === 0) { %>
+          <p class="auth-subtitle">No bookings yet.</p>
+        <% } else { %>
+          <div class="flight-list">
+            <% bookings.forEach(b => { %>
+              <div class="flight-card">
+                <div class="flight-left">
+                  <div class="flight-airline"><%= b.flight ? b.flight.number : 'Flight ' + b.flightId %></div>
+                  <div class="flight-route">
+                    <%= b.flight ? b.flight.origin + ' → ' + b.flight.destination : 'Flight ID: ' + b.flightId %>
+                  </div>
+                  <% if (b.passengers && Array.isArray(b.passengers)) { %>
+                    <div style="margin-top: 8px; font-size: 0.9em; color: var(--muted);">
+                      <%= b.passengers.length %> Passenger<%= b.passengers.length > 1 ? 's' : '' %>
+                      • Class: <%= (b.passengers[0] && b.passengers[0].travelClass) ? b.passengers[0].travelClass : 'Economy' %>
+                    </div>
+                  <% } %>
+                </div>
+                <div class="flight-mid">
+                  <% if (b.flight) { %>
+                    <div class="time">Depart <%= b.flight.departAt %></div>
+                    <div>Arrive <%= b.flight.arriveAt %></div>
+                  <% } %>
+                  <div style="margin-top: 8px; font-size: 0.9em; color: var(--muted);">
+                    Booked: <%= new Date(b.createdAt).toLocaleDateString() %>
+                  </div>
+                </div>
+                <div class="flight-right" style="display: flex; flex-direction: column; gap: 8px;">
+                  <% if (b.flight) { %>
+                    <div class="price">₹<%= b.flight.price %></div>
+                  <% } %>
+                  <div style="display: flex; gap: 8px;">
+                    <a href="<%= isAdminView ? ('/bookings/admin/' + b.id + '/ticket') : ('/bookings/' + b.id + '/ticket') %>" class="btn-primary" style="text-decoration: none; text-align: center; padding: 10px;">Show Ticket</a>
+                    <form method="post" action="<%= isAdminView ? ('/bookings/admin/' + b.id + '?_method=DELETE') : ('/bookings/' + b.id + '?_method=DELETE') %>" style="margin: 0;">
+                      <input type="hidden" name="_method" value="DELETE" />
+                      <button class="btn-primary" type="submit" style="background:var(--danger);color:white; width: 100px;">Cancel</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>

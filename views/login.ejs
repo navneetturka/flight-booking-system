@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login • Flight Booking</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/script.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="auth-card">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Sign in to manage your bookings</p>
+        <% if (typeof error !== 'undefined') { %>
+          <p style="color:#ffb3b3;margin:0 0 10px"><%= error %></p>
+        <% } %>
+        <form class="form" method="post" action="/login" id="loginForm">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com" value="<%= typeof email !== 'undefined' ? email : '' %>" required />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required />
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <select name="role">
+              <option value="user" <%= (typeof role !== 'undefined' && role !== 'admin') ? 'selected' : '' %>>User</option>
+              <option value="admin" <%= (typeof role !== 'undefined' && role === 'admin') ? 'selected' : '' %>>Admin</option>
+            </select>
+          </div>
+          <button class="btn-primary" type="submit">Sign in</button>
+        </form>
+        <script>
+          // Prevent form resubmission on page refresh
+          if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+          }
+        </script>
+        <p class="muted-link" style="margin-top:12px">No account? <a href="/register">Create one</a></p>
+      </div>
+    </div>
+  </body>
+ </html>
+

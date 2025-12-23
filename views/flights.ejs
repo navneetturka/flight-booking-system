@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title || 'Flights' %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/booking.js"></script>
+    <script>window.CURRENT_USER = <%- JSON.stringify(user || null) %>;</script>
+  </head>
+  <body>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <nav class="navbar">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <div class="links">
+          <a href="/">Dashboard</a>
+          <a href="/flights">Flights</a>
+          <a href="/bookings">My Bookings</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/bookings/all">All Bookings</a>
+          <% } %>
+          <form method="post" action="/logout" style="margin:0">
+            <button class="logout-btn" type="submit">Logout</button>
+          </form>
+        </div>
+      </nav>
+    <% } %>
+    <div class="container-top">
+      <div class="auth-card" style="max-width:1200px;width:100%">
+        <h1 class="auth-title">Flights</h1>
+        <div class="flight-list">
+          <% (flights || []).forEach(f => { %>
+            <div class="flight-card">
+              <div class="flight-left">
+                <div class="flight-airline"><%= f.number %></div>
+                <div class="flight-route"><%= f.origin %> → <%= f.destination %></div>
+              </div>
+              <div class="flight-mid">
+                <div class="time">Depart <%= f.departAt %></div>
+                <div>Arrive <%= f.arriveAt %></div>
+                <div style="margin-top: 8px; font-size: 0.9em; color: var(--muted);">
+                  Economy: ₹<%= f.price %><br />
+                  Business: ₹<%= f.businessPrice || (f.price ? (Number(f.price) * 1.5).toFixed(2) : '—') %><br />
+                  First: ₹<%= f.firstPrice || (f.price ? (Number(f.price) * 2).toFixed(2) : '—') %>
+                </div>
+              </div>
+              <div class="flight-right">
+                <div class="price">From ₹<%= f.price %></div>
+                <% if (typeof user !== 'undefined' && user.role === 'admin') { %>
+                  <form method="post" action="/flights/<%= f.id %>/delete">
+                    <button class="btn-primary" type="submit" style="background:var(--danger);color:white;width:120px">Delete</button>
+                  </form>
+                <% } else { %>
+                  <% var canBook = (typeof f.remainingSeats === 'undefined' || f.remainingSeats === null || f.remainingSeats > 0); %>
+                  <button class="btn-primary" type="button" style="width:120px" 
+                    data-book-flight="<%= f.id %>" 
+                    data-flight-number="<%= f.number %>"
+                    data-flight-origin="<%= f.origin %>"
+                    data-flight-destination="<%= f.destination %>"
+                    data-flight-depart="<%= f.departAt %>"
+                    data-flight-arrive="<%= f.arriveAt %>"
+                    data-flight-price="<%= f.price %>"
+                    data-flight-economy="<%= f.price %>"
+                    data-flight-business="<%= f.businessPrice || '' %>"
+                    data-flight-first="<%= f.firstPrice || '' %>"
+                    <%= canBook ? '' : 'disabled style="width:120px; opacity:0.6; cursor:not-allowed;"' %>>
+                    <%= canBook ? 'Book Now' : 'Full' %>
+                  </button>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <% if (typeof user !== 'undefined' && user.role === 'admin') { %>
+          <% const _edit = (typeof editFlight !== 'undefined' && editFlight) ? editFlight : null; %>
+          <h2 class="auth-title" style="margin-top:18px;text-align:center"><%= _edit ? 'Modify flight' : 'Add flight' %></h2>
+          <form class="form center-form" method="post" action="<%= _edit ? ('/flights/' + _edit.id) : '/flights' %>">
+            <div class="field"><label>Number</label><input name="number" value="<%= _edit ? _edit.number : '' %>" required /></div>
+            <div class="field"><label>Origin</label><input name="origin" value="<%= _edit ? _edit.origin : '' %>" required /></div>
+            <div class="field"><label>Destination</label><input name="destination" value="<%= _edit ? _edit.destination : '' %>" required /></div>
+            <div class="field"><label>Depart</label><input name="departAt" type="datetime-local" value="<%= _edit ? String(_edit.departAt).replace(' ', 'T').slice(0,16) : '' %>" placeholder="2025-10-01T08:00" required /></div>
+            <div class="field"><label>Arrive</label><input name="arriveAt" type="datetime-local" value="<%= _edit ? String(_edit.arriveAt).replace(' ', 'T').slice(0,16) : '' %>" placeholder="2025-10-01T11:00" required /></div>
+            <div class="field"><label>Economy Price</label><input name="price" type="number" step="0.01" value="<%= _edit ? _edit.price : '' %>" required /></div>
+            <div class="field"><label>Business Price</label><input name="businessPrice" type="number" step="0.01" value="<%= _edit ? _edit.businessPrice || '' : '' %>" /></div>
+            <div class="field"><label>First Class Price</label><input name="firstPrice" type="number" step="0.01" value="<%= _edit ? _edit.firstPrice || '' : '' %>" /></div>
+            <div class="field"><label>Total Seats</label><input name="totalSeats" type="number" min="1" step="1" value="<%= _edit ? _edit.totalSeats || 180 : 180 %>" required /></div>
+            <button class="btn-primary" type="submit"><%= _edit ? 'Save changes' : 'Create' %></button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>

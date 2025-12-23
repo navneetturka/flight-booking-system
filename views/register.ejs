@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create account • Flight Booking</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="auth-card">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">Join to search and book flights</p>
+        <% if (typeof error !== 'undefined') { %>
+          <p style="color:#ffb3b3;margin:0 0 10px"><%= error %></p>
+        <% } %>
+        <form class="form" method="post" action="/register" id="registerForm">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Jane Doe" value="<%= typeof name !== 'undefined' ? name : '' %>" required />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com" value="<%= typeof email !== 'undefined' ? email : '' %>" required />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" id="password" placeholder="••••••••" required />
+            <small style="color: #666; font-size: 0.85em; display: block; margin-top: 5px;">
+              Password must contain: at least 8 characters, one uppercase, one lowercase, one number, and one special character
+            </small>
+            <div id="passwordStrength" style="margin-top: 5px; font-size: 0.85em;"></div>
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <select name="role" required>
+              <option value="user" <%= (typeof role !== 'undefined' && role !== 'admin') ? 'selected' : '' %>>User</option>
+              <option value="admin" <%= (typeof role !== 'undefined' && role === 'admin') ? 'selected' : '' %>>Admin</option>
+            </select>
+          </div>
+          <button class="btn-primary" type="submit">Create account</button>
+        </form>
+        <script>
+          // Prevent form resubmission on page refresh
+          if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+          }
+
+          // Password validation
+          const passwordInput = document.getElementById('password');
+          const strengthDiv = document.getElementById('passwordStrength');
+          const form = document.getElementById('registerForm');
+
+          function validatePasswordStrength(password) {
+            const errors = [];
+            if (password.length < 8) errors.push("at least 8 characters");
+            if (!/[A-Z]/.test(password)) errors.push("one uppercase letter");
+            if (!/[a-z]/.test(password)) errors.push("one lowercase letter");
+            if (!/[0-9]/.test(password)) errors.push("one number");
+            if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) errors.push("one special character");
+            return errors;
+          }
+
+          passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            if (password.length === 0) {
+              strengthDiv.innerHTML = '';
+              return;
+            }
+            const errors = validatePasswordStrength(password);
+            if (errors.length === 0) {
+              strengthDiv.innerHTML = '<span style="color: green;">✓ Password strength: Strong</span>';
+            } else {
+              strengthDiv.innerHTML = '<span style="color: orange;">Missing: ' + errors.join(', ') + '</span>';
+            }
+          });
+
+          form.addEventListener('submit', function(e) {
+            const password = passwordInput.value;
+            const errors = validatePasswordStrength(password);
+            if (errors.length > 0) {
+              e.preventDefault();
+              alert('Password must contain: ' + errors.join(', '));
+              return false;
+            }
+          });
+        </script>
+        <p class="muted-link" style="margin-top:12px">Already have an account? <a href="/login">Sign in</a></p>
+      </div>
+    </div>
+  </body>
+ </html>
+

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "8987e8bd-0c6e-4ec7-a2b5-51db7c5c39e1",
+    "userId": "ad0130ee-027b-429f-bc2d-22c2fb673bc0",
+    "flightId": "104",
+    "createdAt": "2025-09-23T12:20:52.901Z"
+  },
+  {
+    "id": "4afea704-ca4f-4a4b-ad9a-d211d0a5089b",
+    "userId": "ad0130ee-027b-429f-bc2d-22c2fb673bc0",
+    "flightId": "102",
+    "createdAt": "2025-09-23T15:20:58.139Z"
+  },
+  {
+    "id": "48df33ff-f427-4365-a8c2-73b4ae898cdc",
+    "userId": "ad0130ee-027b-429f-bc2d-22c2fb673bc0",
+    "flightId": "102",
+    "createdAt": "2025-09-23T15:42:38.430Z"
+  }
+]

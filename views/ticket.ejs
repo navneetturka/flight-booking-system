@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ticket • SkyReserve</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/script.js"></script>
+    <script>window.CURRENT_USER = <%- JSON.stringify(user || null) %>;</script>
+  </head>
+  <body>
+    <% if (typeof user !== 'undefined' && user) { %>
+      <nav class="navbar">
+        <div class="brand">
+          <div class="logo">✈</div>
+          <div class="title">SkyReserve</div>
+        </div>
+        <div class="links">
+          <a href="/">Dashboard</a>
+          <a href="/flights">Flights</a>
+          <a href="/bookings">My Bookings</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/bookings/all">All Bookings</a>
+          <% } %>
+          <form method="post" action="/logout" style="margin:0">
+            <button class="logout-btn" type="submit">Logout</button>
+          </form>
+        </div>
+      </nav>
+    <% } %>
+    <div class="container">
+      <div class="auth-card" style="max-width:900px;width:100%">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 class="auth-title">Flight Ticket</h1>
+          <p class="auth-subtitle">Booking ID: <%= booking.id %></p>
+        </div>
+
+        <div class="ticket-content">
+          <div class="ticket-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h2 style="margin: 0; font-size: 32px;">✈ SkyReserve</h2>
+                <p style="margin: 8px 0 0; color: #666;">Flight Booking Confirmation</p>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 14px; color: #666;">Booking ID</div>
+                <div style="font-size: 20px; font-weight: 700;"><%= booking.id %></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ticket-details">
+            <div class="ticket-detail-item">
+              <div class="ticket-label">Flight Number</div>
+              <div class="ticket-value"><%= flight.number %></div>
+            </div>
+            <div class="ticket-detail-item">
+              <div class="ticket-label">Route</div>
+              <div class="ticket-value"><%= flight.origin %> → <%= flight.destination %></div>
+            </div>
+            <div class="ticket-detail-item">
+              <div class="ticket-label">Departure</div>
+              <div class="ticket-value"><%= flight.departAt %></div>
+            </div>
+            <div class="ticket-detail-item">
+              <div class="ticket-label">Arrival</div>
+              <div class="ticket-value"><%= flight.arriveAt %></div>
+            </div>
+            <div class="ticket-detail-item">
+              <div class="ticket-label">Total Amount (approx.)</div>
+              <div class="ticket-value">$<%= flight.price %></div>
+            </div>
+            <div class="ticket-detail-item">
+              <div class="ticket-label">Booking Date</div>
+              <div class="ticket-value"><%= new Date(booking.createdAt).toLocaleString() %></div>
+            </div>
+          </div>
+
+          <% if (booking.passengers && Array.isArray(booking.passengers) && booking.passengers.length > 0) { %>
+            <div style="margin-top: 32px;">
+              <h3 style="margin-bottom: 16px; font-size: 18px; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Passenger Details</h3>
+              <% booking.passengers.forEach((passenger, index) => { %>
+                <div style="margin-bottom: 24px; padding: 16px; background: #f9f9f9; border-radius: 8px;">
+                  <div style="font-weight: 600; margin-bottom: 12px; font-size: 16px;">Passenger <%= index + 1 %></div>
+                  <div class="ticket-details">
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Name</div>
+                      <div class="ticket-value"><%= passenger.firstName %> <%= passenger.lastName %></div>
+                    </div>
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Email</div>
+                      <div class="ticket-value"><%= passenger.email %></div>
+                    </div>
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Mobile</div>
+                      <div class="ticket-value"><%= passenger.mobile %></div>
+                    </div>
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Location</div>
+                      <div class="ticket-value"><%= passenger.state %>, <%= passenger.country %></div>
+                    </div>
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Class</div>
+                      <div class="ticket-value"><%= passenger.travelClass || 'Economy' %></div>
+                    </div>
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Fare Paid</div>
+                      <div class="ticket-value">
+                        $<%= (Number(passenger.price) || Number(flight.price) || 0).toFixed(2) %>
+                      </div>
+                    </div>
+                    <div class="ticket-detail-item">
+                      <div class="ticket-label">Seat</div>
+                      <div class="ticket-value"><%= String.fromCharCode(65 + Math.floor(index / 6)) %><%= (index % 6 + 1) %></div>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+
+          <div class="ticket-footer">
+            <p style="margin: 0;">Thank you for choosing SkyReserve. Have a safe journey! ✈️</p>
+            <p style="margin: 8px 0 0; font-size: 11px;">This is an electronic ticket. Please arrive at the airport at least 2 hours before departure.</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; text-align: center;">
+          <button class="btn-primary" onclick="window.print()">Print Ticket</button>
+          <a href="/bookings" class="btn-secondary" style="margin-left: 12px; text-decoration: none; display: inline-block;">Back to Bookings</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+
