@@ -28,7 +28,6 @@ This application allows users to search and book flights, while admins can manag
 * Edit flight details
 * Delete flights
 * Manage all bookings
-* Access admin-level controls
 
 ---
 
@@ -42,21 +41,31 @@ This application allows users to search and book flights, while admins can manag
 
 ---
 
+### 📩 Email Notification System
+
+* Automated booking confirmation emails
+* HTML formatted email templates
+* Sent to user's registered email
+* Implemented using Nodemailer
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Backend
 
-* Node.js (Runtime)
-* Express.js (Framework)
-* MySQL (Database)
-* Redis (Session Store & Caching)
-* Socket.io (Real-time communication)
-* bcrypt (Authentication)
-* dotenv (Environment configuration)
+* Node.js
+* Express.js
+* MySQL
+* Redis
+* Socket.io
+* bcrypt
+* dotenv
+* Nodemailer
 
 ### Frontend
 
-* EJS (Templating Engine)
+* EJS Templates
 * HTML, CSS, JavaScript
 
 ---
@@ -65,16 +74,16 @@ This application allows users to search and book flights, while admins can manag
 
 ```
 flight-booking-system/
-│── config/           # DB & Redis configuration
-│── controllers/      # Business logic
-│── data/             # Sample/seed data
-│── middleware/       # Auth & role middleware
-│── models/           # SQL queries
-│── public/           # Static files (CSS, JS)
-│── routes/           # Application routes
-│── utils/            # Helper functions
-│── views/            # EJS templates
-│── server.js         # Entry point
+│── config/
+│── controllers/
+│── data/
+│── middleware/
+│── models/
+│── public/
+│── routes/
+│── utils/
+│── views/
+│── server.js
 │── package.json
 │── README.md
 ```
@@ -83,7 +92,7 @@ flight-booking-system/
 
 ## ⚙️ Setup Instructions
 
-### 1️⃣ Clone the Repository
+### 1️⃣ Clone Repository
 
 ```bash
 git clone <your-repo-link>
@@ -96,9 +105,9 @@ cd flight-booking-system
 npm install
 ```
 
-### 3️⃣ Configure Environment Variables
+### 3️⃣ Environment Variables
 
-Create a `.env` file:
+Create `.env` file:
 
 ```env
 PORT=3000
@@ -109,15 +118,19 @@ MYSQL_USER=root
 MYSQL_PASSWORD=
 MYSQL_DATABASE=flight_booking
 
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://127.0.0.1:6379
 SESSION_SECRET=your_secret_key
+
+EMAIL_SERVICE=gmail
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
 ```
 
 ---
 
-## 🗄️ Database Setup (MySQL)
+## 🗄️ Database Setup
 
-Run the following SQL queries:
+Run this SQL:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS flight_booking;
@@ -155,7 +168,24 @@ CREATE TABLE bookings (
 
 ---
 
-## ▶️ Running the Project
+## ⚠️ Database Migration (Important)
+
+Run this to support passenger details and improve performance:
+
+```sql
+ALTER TABLE bookings 
+ADD COLUMN passengers TEXT NULL 
+COMMENT 'JSON array of passenger details' 
+AFTER flight_id;
+
+CREATE INDEX idx_bookings_user_id ON bookings(user_id);
+CREATE INDEX idx_bookings_flight_id ON bookings(flight_id);
+CREATE INDEX idx_bookings_created_at ON bookings(created_at);
+```
+
+---
+
+## ▶️ Run the Project
 
 ```bash
 npm run dev
@@ -163,31 +193,47 @@ npm run dev
 npm start
 ```
 
-Open in browser:
+Open:
 👉 http://localhost:3000
 
 ---
 
 ## 📌 Scripts
 
-* `npm run dev` → Run with nodemon
-* `npm start` → Production server
+* `npm run dev` → nodemon
+* `npm start` → production
+
+---
+
+## 🚀 Deployment Notes
+
+* Local MySQL will NOT work in production
+* Use cloud database (PlanetScale / Railway)
+* Use cloud Redis (Upstash)
+* Email works with Gmail App Password
 
 ---
 
 ## 🔐 Authorization Flow
 
-* Authentication handled via sessions
-* Passwords hashed using bcrypt
-* Middleware enforces role-based access
+* Session-based authentication
+* bcrypt password hashing
+* Middleware for role checking
 * Protected routes:
 
   * `/admin/*` → Admin only
-  * `/bookings` → Logged-in users
+  * `/bookings` → Authenticated users
 
 ---
 
 ## ⚠️ Notes
 
-* Redis must be running (local/cloud)
+* Redis must be running
 * MySQL must be configured
+* SMS/WhatsApp notifications can be added using Twilio (optional)
+
+---
+
+## 👨‍💻 Author
+
+Navneet Kaur
