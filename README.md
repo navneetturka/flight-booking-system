@@ -233,7 +233,3 @@ Open:
 * SMS/WhatsApp notifications can be added using Twilio (optional)
 
 ---
-
-## 👨‍💻 Author
-
-Navneet Kaur
