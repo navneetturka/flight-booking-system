@@ -86,9 +86,6 @@ flight-booking-system/
 │── server.js
 │── package.json
 │── README.md
-```
-
----
 
 ## ⚙️ Setup Instructions
 
@@ -230,10 +227,5 @@ Open:
 
 * Redis must be running
 * MySQL must be configured
-* SMS/WhatsApp notifications can be added using Twilio (optional)
+* SMS/WhatsApp notifications can be added using Twilio 
 
----
-
-## 👨‍💻 Author
-
-Navneet Kaur
